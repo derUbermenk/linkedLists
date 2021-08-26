@@ -18,25 +18,17 @@ class LinkedList
   # @param value [Object]
   # @return [String] the new value of linkedlist
   def append(value)
-    return @head = Node.new(value) if @head.nil?
-
-    # enable this when code blows up
-
-    # starting from current node
-    # current_node = self.list_head
-    # current_node = self.current_node.next until current_node.next.nil?
-
-    # current_node.next = Node.new(value)
-    #
-
-    # fast approach
-    # set a next node for current tail
-    @list_tail.next = Node.new(value)
-    # set the next node as the new tail
-    @list_tail = @list_tail.next
+    if @head.nil?
+      @head = Node.new(value) 
+      @tail = @head
+    else
+      # set a next_node node for current tail
+      @tail.next_node = Node.new(value)
+      # set the next_node node as the new tail
+      @tail = @tail.next_node
+    end
 
     inc_size
-
     self.to_s
   end
 
@@ -44,10 +36,10 @@ class LinkedList
   # @param value [Object]
   # @return [String] the new values of LinkedList 
   def prepend(value)
-    # create a variable new head, set the next value for that node using current head
+    # create a variable new head, set the next_node value for that node using current head
     # ... set the new head as the current head
 
-    @list_head = Node.new(value, @list_head)
+    @head = Node.new(value, @head)
     inc_size
 
     self.to_s
@@ -57,24 +49,26 @@ class LinkedList
   # @param index [Integer]
   # @return [Node] the node at given index
   def at(index)
-    case index
-    when index.zero? then @head
-    when index == size - 1 then tail
-    else count_to_index(index)
+    if index.zero?
+      @head
+    elsif index == @size - 1
+      @tail
+    else
+      count_to_index(index)
     end
   end
 
   # removes the last elements from the list
   # @return [Node]
   def pop
-    popped_node = @tail
+    popped_tail = @tail
 
-    # set new tail
-    @tail = self.at(size - 1)
-    @tail.next = nil
+    new_tail = self.at(@size - 2)
+    @tail = new_tail
+    @tail.next_node = nil
 
     dec_size
-    popped_node
+    popped_tail
   end
 
   # represent LinkedLists as strings
@@ -82,13 +76,14 @@ class LinkedList
   def to_s
     initial_list = ''
 
+    current_node = @head
     until current_node.nil?
       initial_list.concat("( #{current_node.value} ) -> ")
-      current_node = current_node.next
+      current_node = current_node.next_node
     end
 
     # also add nil value once last element reached 
-    initial_list.concat(to_s.current_node.value)
+    initial_list.concat('nil')
   end
 
   private
@@ -108,12 +103,13 @@ class LinkedList
   # counts to index starting from head
   # via incrementing
   # @param index [Integer]
+  # @return [Node] 
   def count_to_index(index_to_find)
-    current_node = @head.next
+    current_node = @head.next_node
     current_index = 1
 
-    while current_index != index
-      current_node = current_node.next
+    while current_index != index_to_find
+      current_node = current_node.next_node
       current_index += 1
     end
 
@@ -124,6 +120,9 @@ end
 
 def main
   list = LinkedList.new
+  a = list.append(12)
+  b = list.append(13)
+  c = list.append(15)
   binding.pry
 end
 
