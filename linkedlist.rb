@@ -71,6 +71,69 @@ class LinkedList
     popped_tail
   end
 
+  # @param return_indx [Bool] set to true if want to return indx instead
+  def contains?(value, return_indx = false)
+    case value
+    when @head.value
+      return 0 if return_indx
+
+      true
+    when @tail.value
+      return size - 1 if return_indx
+
+      true
+    else
+      current_index = 1
+      current_node = @head.next_node
+
+      value_found = false
+
+      until current_index == @size - 1 or value_found
+        value_found = current_node.value == value
+        current_node.next_node
+        current_index += 1
+      end
+
+      return current_index if return_indx
+
+      value_found
+    end
+  end
+
+  def find_value(value)
+    contains?(value, return_indx = true)
+  end
+
+  def insert_at(index, value)
+    if index == 0
+      head_next_node = @head
+      @head = Node.new(value, head_next_node)
+    else
+
+      before_node = self.at(index-1)
+      after_node = before_node.next_node 
+
+      additional_node = Node.new(value, after_node)
+      before_node.next_node = additional_node
+    end
+
+    inc_size
+    self.to_s
+  end
+
+  def remove_at(index)
+    return @head = @head.next_node if index.zero?
+
+    before_node = self.at(index - 1)
+    node_to_remove = before_node.next_node
+    before_node.next_node = node_to_remove.next_node
+
+    @tail = before_node if index == @size - 1
+
+    dec_size
+    node_to_remove
+  end
+
   # represent LinkedLists as strings
   # @return [String]
   def to_s
@@ -82,7 +145,7 @@ class LinkedList
       current_node = current_node.next_node
     end
 
-    # also add nil value once last element reached 
+    # also add nil value once last element reached
     initial_list.concat('nil')
   end
 
